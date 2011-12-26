@@ -13,8 +13,6 @@
 #
 #  - Written and tested with ruby 1.8.7 on OS X.
 #
-#  - It's typical to take .
-#
 #  - Hosted at github.com/johnhopson/bin2c
 #
 #  - 'license' file has release terms
