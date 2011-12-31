@@ -123,23 +123,23 @@ class TestBin2C < Test::Unit::TestCase
 
 
   def  test_help
-    expected = "Usage: bin2c.rb [options] [filename]"                      +"\n" +
-               "    -n, --name NAME                  Array name"           +"\n" +
-               "    -t, --type TYPE                  Array type"           +"\n" +
-               "    -o, --output FILE                Specify output file"  +"\n" +
-               "    -p, --[no-]preamble              No file header"       +"\n" +
-               "    -v, --verbose                    Run verbosely"        +"\n" +
-               "    -h, --help                       Emit help information"+"\n" +
-               "        --version                    Emit version and exit"+"\n" +
-                                                                            "\n" +
-               "Examples:"                                                 +"\n" +
-               "    bin2c.rb -o output.cpp  foo.bin"                       +"\n" +
-               "    bin2c.rb -o header.h  foo.bin"                         +"\n" +
-               "    bin2c.rb -v  <foo.bin  >output.cpp"                    +"\n" +
-               "    bin2c.rb --no-preamble  -o output.cpp  <foo.bin"       +"\n" +
-               "    bin2c.rb --type \"uint8_t\"  <foo.bin  >output.cpp"    +"\n"
-
-    assert_equal  expected, `./bin2c.rb  --help`
+    assert_equal [ 'Usage: bin2c.rb [options] [filename]',
+                   '    -n, --name NAME                  Array name',
+                   '    -t, --type TYPE                  Array type',
+                   '    -o, --output FILE                Specify output file',
+                   '    -p, --[no-]preamble              No file header',
+                   '    -v, --verbose                    Run verbosely',
+                   '    -h, --help                       Emit help information',
+                   '        --version                    Emit version and exit',
+                   '',
+                   'Examples:',
+                   '    bin2c.rb -o output.cpp  foo.bin',
+                   '    bin2c.rb -o header.h  foo.bin',
+                   '    bin2c.rb -v  <foo.bin  >output.cpp',
+                   '    bin2c.rb --no-preamble  -o output.cpp  <foo.bin',
+                   '    bin2c.rb --type "uint8_t"  <foo.bin  >output.cpp',
+                   ''   
+                 ].join("\n"), `./bin2c.rb  --help`
   end
 
 
