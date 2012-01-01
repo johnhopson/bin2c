@@ -123,23 +123,26 @@ class TestBin2C < Test::Unit::TestCase
 
 
   def  test_help
-    assert_equal [ 'Usage: bin2c.rb [options] [filename]',
-                   '    -n, --name NAME                  Array name',
-                   '    -t, --type TYPE                  Array type',
-                   '    -o, --output FILE                Specify output file',
-                   '    -p, --[no-]preamble              No file header',
-                   '    -v, --verbose                    Run verbosely',
-                   '    -h, --help                       Emit help information',
-                   '        --version                    Emit version and exit',
-                   '',
-                   'Examples:',
-                   '    bin2c.rb -o output.cpp  foo.bin',
-                   '    bin2c.rb -o header.h  foo.bin',
-                   '    bin2c.rb -v  <foo.bin  >output.cpp',
-                   '    bin2c.rb --no-preamble  -o output.cpp  <foo.bin',
-                   '    bin2c.rb --type "uint8_t"  <foo.bin  >output.cpp',
-                   ''   
-                 ].join("\n"), `./bin2c.rb  --help`
+    expected  = <<-notes.gsub(/^ {8}/, '')
+        Usage: bin2c.rb [options] [filename]
+            -n, --name NAME                  Array name
+            -t, --type TYPE                  Array type
+            -o, --output FILE                Specify output file
+            -p, --[no-]preamble              No file header
+            -v, --verbose                    Run verbosely
+            -h, --help                       Emit help information
+                --version                    Emit version and exit
+
+        Examples:
+            bin2c.rb -o output.cpp  foo.bin
+            bin2c.rb -o header.h  foo.bin
+            bin2c.rb -v  <foo.bin  >output.cpp
+            bin2c.rb --no-preamble  -o output.cpp  <foo.bin
+            bin2c.rb --type \"uint8_t\"  <foo.bin  >output.cpp
+
+       notes
+                     
+    assert_equal expected, `./bin2c.rb  --help`
   end
 
 
@@ -246,58 +249,64 @@ class TestBin2C < Test::Unit::TestCase
                         
     assert  File.exist? cfile
     assert  File.exist? binfile
-        
-    #  extract array type, name &
-    #  size from cfile.
+  
+    begin
+      #  extract array type, name &
+      #  size from cfile.
 
-    repl = {}
-    text = File.read( cfile )
+      repl = {}
+      text = File.read( cfile )
     
-    text.scan( /^(.*) ([A-Za-z_][A-Za-z_0-9]*)\[(\d+)\] =/ )  do  
-      |type, name, size|
+      text.scan( /^(.*) ([A-Za-z_][A-Za-z_0-9]*)\[(\d+)\] =/ )  do  
+        |type, name, size|
       
-      #  remove 'const' modifier from
-      #  type.  test array must be writeable.
+        #  remove 'const' modifier from
+        #  type.  test array must be writeable.
 
-      if type[0,5] == "const"
-        type = type[6..-1]
+        if type[0,5] == "const"
+          type = type[6..-1]
+        end
+      
+        repl = {/<arrtype>/  => type.strip, 
+                /<arrname>/  => name,
+                /<arrsize>/  => size,
+                /<filename>/ => cfile }
       end
-      
-      repl = {/<arrtype>/  => type.strip, 
-              /<arrname>/  => name,
-              /<arrsize>/  => size,
-              /<filename>/ => cfile }
-    end
 
-    #  adjust labels in test app 
-    #  to link it with cfile.
+      #  adjust labels in test app 
+      #  to link it with cfile.
     
-    text = File.read( "bin2c_test.c" )
+      text = File.read( "bin2c_test.c" )
                     
-    repl.each do |search, replace|
-      text.gsub! search, replace
+      repl.each do |search, replace|
+        text.gsub! search, replace
+      end
+    
+      File.open( "tmp_test.c", "w" ) { |f| f.puts text }  
+    
+      #  compile with cfile and run
+      #  app to test.  g++ allows c
+      #  or c++.
+    
+      if cfile.end_with?(".h")
+        out = `g++  -o tmp_test.exe  tmp_test.c  -D HEADER  2>&1`
+      else
+        out = `g++  -o tmp_test.exe  tmp_test.c  #{cfile}  2>&1`
+      end
+      assert_equal 0, $?.exitstatus
+    
+      out += `./tmp_test.exe  #{binfile}  2>&1`    
+      assert_equal 0, $?.exitstatus
+    
+      out
+      
+    ensure
+      File.delete cfile    if File.exists? cfile
+      File.delete binfile  if File.exists? binfile
+      
+      File.delete "tmp_test.c"    if File.exists? "tmp_test.c"
+      File.delete "tmp_test.exe"  if File.exists? "tmp_test.exe"
     end
-    
-    File.open( "tmp_test.c", "w" ) { |f| f.puts text }  
-    
-    #  compile with cfile and run
-    #  app to test.  g++ allows c
-    #  or c++.
-    
-    if cfile.end_with?(".h")
-      out = `g++  -o tmp_test.exe  tmp_test.c  -D HEADER  2>&1`
-    else
-      out = `g++  -o tmp_test.exe  tmp_test.c  #{cfile}  2>&1`
-    end
-    assert_equal 0, $?.exitstatus
-    
-    out += `./tmp_test.exe  #{binfile}  2>&1`    
-    assert_equal 0, $?.exitstatus
-    
-    #  clean up    
-    File.delete  cfile, binfile, "tmp_test.exe", "tmp_test.c"
- 
-    out
   end
   
 end

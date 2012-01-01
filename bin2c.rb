@@ -47,18 +47,21 @@ def parseopts
   opts.on( '-t', '--type TYPE',     "Array type"           )  { |t| @options[:arraytype] = t }
   opts.on( '-o', '--output FILE',   "Specify output file"  )  { |f| @options[:outfile]   = f }      
   opts.on( '-p', '--[no-]preamble', "No file header"       )  { |n| @options[:preamble]  = n }        
-  opts.on( '-v', '--verbose',       "Run verbosely"        )  { @options[:verbose]    = true }        
-  opts.on( '-h', '--help',          "Emit help information")  { @options[:help]       = true }  
-  opts.on(       '--version',       "Emit version and exit")  { @options[:version]    = true }
+  opts.on( '-v', '--verbose',       "Run verbosely"        )  { @options[:verbose] = true }        
+  opts.on( '-h', '--help',          "Emit help information")  { @options[:help]    = true }  
+  opts.on(       '--version',       "Emit version and exit")  { @options[:version] = true }
   
-  opts.separator                                                             "\n" + 
-                 "Examples:"                                                 "\n" +    
-                 "    #{@appname} -o output.cpp  foo.bin"                    "\n" +
-                 "    #{@appname} -o header.h  foo.bin"                      "\n" +
-                 "    #{@appname} -v  <foo.bin  >output.cpp"                 "\n" +
-                 "    #{@appname} --no-preamble  -o output.cpp  <foo.bin"    "\n" +
-                 "    #{@appname} --type \"uint8_t\"  <foo.bin  >output.cpp" "\n" +
-                 ""
+  opts.separator <<-notes.gsub(/^ {20}/, '')
+
+                    Examples:
+                        #{@appname} -o output.cpp  foo.bin
+                        #{@appname} -o header.h  foo.bin
+                        #{@appname} -v  <foo.bin  >output.cpp
+                        #{@appname} --no-preamble  -o output.cpp  <foo.bin
+                        #{@appname} --type \"uint8_t\"  <foo.bin  >output.cpp
+
+                   notes
+  
   begin
     opts.parse!(ARGV)
     
