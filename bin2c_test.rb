@@ -147,12 +147,17 @@ class TestBin2C < Test::Unit::TestCase
 
 
   def  test_zero_file_size_error
-    
-    gen_random_file  "test.bin", 0
-    assert_equal  "empty input file - exiting\n", 
-                  `./bin2c.rb  -o "test.c"  test.bin 2>&1`
-    assert_equal  $?.exitstatus, 1
-    File.delete  "test.c", "test.bin"
+
+    begin    
+      gen_random_file  "test.bin", 0
+      assert_equal  "empty input file - exiting\n", 
+                    `./bin2c.rb  -o "test.c"  test.bin 2>&1`
+      assert_equal  $?.exitstatus, 1
+    ensure
+      ["test.c", "test.bin"].each do |f|
+        File.delete f   if File.exists? f
+      end
+    end
   end
 
 
@@ -169,8 +174,6 @@ class TestBin2C < Test::Unit::TestCase
     assert_raise Test::Unit::AssertionFailedError do      
       compiler_test  "abe.c", "abe.bin"
     end
-
-    File.delete  "abe.c", "abe.bin"
   end
 
 
@@ -186,8 +189,6 @@ class TestBin2C < Test::Unit::TestCase
     assert_raise Test::Unit::AssertionFailedError do      
       compiler_test  "abe.c", "abe.bin"
     end       
-
-    File.delete  "abe.c", "abe.bin"
   end
 
 
@@ -301,11 +302,9 @@ class TestBin2C < Test::Unit::TestCase
       out
       
     ensure
-      File.delete cfile    if File.exists? cfile
-      File.delete binfile  if File.exists? binfile
-      
-      File.delete "tmp_test.c"    if File.exists? "tmp_test.c"
-      File.delete "tmp_test.exe"  if File.exists? "tmp_test.exe"
+      [cfile, binfile, "tmp_test.c", "tmp_test.exe"].each do |f|
+        File.delete f   if File.exists? f
+      end
     end
   end
   
