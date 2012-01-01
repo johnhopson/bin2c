@@ -147,16 +147,14 @@ class TestBin2C < Test::Unit::TestCase
 
 
   def  test_zero_file_size_error
-
     begin    
       gen_random_file  "test.bin", 0
       assert_equal  "empty input file - exiting\n", 
                     `./bin2c.rb  -o "test.c"  test.bin 2>&1`
       assert_equal  $?.exitstatus, 1
     ensure
-      ["test.c", "test.bin"].each do |f|
-        File.delete f   if File.exists? f
-      end
+      File.delete "test.c"    if File.exists? "test.c"
+      File.delete "test.bin"  if File.exists? "test.bin"
     end
   end
 
