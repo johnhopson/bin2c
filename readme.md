@@ -27,7 +27,7 @@ bin2c.rb translates the contents of any file to a C array.
 	//  foo.bin converted to C array.
 	//
 	//  - using bin2c.rb 0.7
-	//  - created 2011-12-24
+	//  - created 2011-12-23
 
 	unsigned char  foo[22] = 
 	{
@@ -38,10 +38,9 @@ bin2c.rb translates the contents of any file to a C array.
 
 
 ### Testing
-
 bin2c_test.rb is a test suite for bin2c.rb.  Type 'bin2c_test.rb' to run the entire suite.  Type 'bin2c_test.rb -h' to see usage, including how to run individual tests.
 
 
-### License
-
-Released under the MIT License.  See 'license' file.
+### Source
+bin2c is hosted at [github.com/johnhopson/bin2c](http://github.com/johnhopson/bin2c).  
+It is released under the MIT license.  See 'license' file.
