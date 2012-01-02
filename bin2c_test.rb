@@ -147,15 +147,15 @@ class TestBin2C < Test::Unit::TestCase
 
 
   def  test_zero_file_size_error
-    begin    
-      gen_random_file  "test.bin", 0
-      assert_equal  "empty input file - exiting\n", 
-                    `./bin2c.rb  -o "test.c"  test.bin 2>&1`
-      assert_equal  $?.exitstatus, 1
-    ensure
-      File.delete "test.c"    if File.exists? "test.c"
-      File.delete "test.bin"  if File.exists? "test.bin"
-    end
+
+    gen_random_file  "test.bin", 0
+    assert_equal  "empty input file - exiting\n", 
+                  `./bin2c.rb  -o "test.c"  test.bin 2>&1`
+    assert_equal  $?.exitstatus, 1
+    
+  ensure
+    File.delete "test.c"    if File.exists? "test.c"
+    File.delete "test.bin"  if File.exists? "test.bin"
   end
 
 
@@ -249,60 +249,58 @@ class TestBin2C < Test::Unit::TestCase
     assert  File.exist? cfile
     assert  File.exist? binfile
   
-    begin
-      #  extract array type, name &
-      #  size from cfile.
+    #  extract array type, name &
+    #  size from cfile.
 
-      repl = {}
-      text = File.read( cfile )
+    repl = {}
+    text = File.read( cfile )
+  
+    text.scan( /^(.*) ([A-Za-z_][A-Za-z_0-9]*)\[(\d+)\] =/ )  do  
+      |type, name, size|
     
-      text.scan( /^(.*) ([A-Za-z_][A-Za-z_0-9]*)\[(\d+)\] =/ )  do  
-        |type, name, size|
-      
-        #  remove 'const' modifier from
-        #  type.  test array must be writeable.
+      #  remove 'const' modifier from
+      #  type.  test array must be writeable.
 
-        if type[0,5] == "const"
-          type = type[6..-1]
-        end
-      
-        repl = {/<arrtype>/  => type.strip, 
-                /<arrname>/  => name,
-                /<arrsize>/  => size,
-                /<filename>/ => cfile }
+      if type[0,5] == "const"
+        type = type[6..-1]
       end
+    
+      repl = {/<arrtype>/  => type.strip, 
+              /<arrname>/  => name,
+              /<arrsize>/  => size,
+              /<filename>/ => cfile }
+    end
 
-      #  adjust labels in test app 
-      #  to link it with cfile.
+    #  adjust labels in test app 
+    #  to link it with cfile.
+  
+    text = File.read( "bin2c_test.c" )
+                  
+    repl.each do |search, replace|
+      text.gsub! search, replace
+    end
+  
+    File.open( "tmp_test.c", "w" ) { |f| f.puts text }  
+  
+    #  compile with cfile and run
+    #  app to test.  g++ allows c
+    #  or c++.
+  
+    if cfile.end_with?(".h")
+      out = `g++  -o tmp_test.exe  tmp_test.c  -D HEADER  2>&1`
+    else
+      out = `g++  -o tmp_test.exe  tmp_test.c  #{cfile}  2>&1`
+    end
+    assert_equal 0, $?.exitstatus
+  
+    out += `./tmp_test.exe  #{binfile}  2>&1`    
+    assert_equal 0, $?.exitstatus
+  
+    out
     
-      text = File.read( "bin2c_test.c" )
-                    
-      repl.each do |search, replace|
-        text.gsub! search, replace
-      end
-    
-      File.open( "tmp_test.c", "w" ) { |f| f.puts text }  
-    
-      #  compile with cfile and run
-      #  app to test.  g++ allows c
-      #  or c++.
-    
-      if cfile.end_with?(".h")
-        out = `g++  -o tmp_test.exe  tmp_test.c  -D HEADER  2>&1`
-      else
-        out = `g++  -o tmp_test.exe  tmp_test.c  #{cfile}  2>&1`
-      end
-      assert_equal 0, $?.exitstatus
-    
-      out += `./tmp_test.exe  #{binfile}  2>&1`    
-      assert_equal 0, $?.exitstatus
-    
-      out
-      
-    ensure
-      [cfile, binfile, "tmp_test.c", "tmp_test.exe"].each do |f|
-        File.delete f   if File.exists? f
-      end
+  ensure
+    [cfile, binfile, "tmp_test.c", "tmp_test.exe"].each do |f|
+      File.delete f   if File.exists? f
     end
   end
   
