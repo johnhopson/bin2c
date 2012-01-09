@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby 
+#!/usr/bin/env ruby
 # ------------------  (c)2011 john hopson  -------------------
 #
 #  Test suite for bin2c program.
@@ -20,10 +20,10 @@
 
 require "test/unit"
 require 'stringio'
- 
+
 class TestBin2C < Test::Unit::TestCase
 
-  
+
   def  test_tiny_file
     size_test( 1 )
   end
@@ -73,13 +73,13 @@ class TestBin2C < Test::Unit::TestCase
 
   def  test_int_type
     common_test  "-t \"int\"   <bar.bin  >foo.c",
-                 "foo.c", 
+                 "foo.c",
                  "bar.bin"
   end
 
   def  test_unsigned_int_type
     common_test  "-t \"unsigned int\"   <bar.bin  >bar.c",
-                 "bar.c", 
+                 "bar.c",
                  "bar.bin"
   end
 
@@ -108,16 +108,16 @@ class TestBin2C < Test::Unit::TestCase
 
     gen_random_file  "foo.bin", 99
     `../bin2c  -o foo.c  foo.bin`
-    size_with_preamble = File.stat("foo.c").size   
+    size_with_preamble = File.stat("foo.c").size
     File.delete "foo.c"
 
     `../bin2c  --preamble  -o foo.c  foo.bin`
     assert_equal  size_with_preamble, File.stat("foo.c").size
 
     `../bin2c  --no-preamble  -o foo.c  foo.bin`
-    size_wo_preamble = File.stat("foo.c").size   
+    size_wo_preamble = File.stat("foo.c").size
     assert  size_with_preamble > size_wo_preamble
-  
+
     compiler_test  "foo.c", "foo.bin"
   end
 
@@ -141,7 +141,7 @@ class TestBin2C < Test::Unit::TestCase
             bin2c --type \"uint8_t\"  <foo.bin  >output.cpp
 
        notes
-                     
+
     assert_equal expected, `../bin2c  --help`
   end
 
@@ -149,10 +149,10 @@ class TestBin2C < Test::Unit::TestCase
   def  test_zero_file_size_error
 
     gen_random_file  "test.bin", 0
-    assert_equal  "empty input file - exiting\n", 
+    assert_equal  "empty input file - exiting\n",
                   `../bin2c  -o "test.c"  test.bin 2>&1`
     assert_equal  $?.exitstatus, 1
-    
+
   ensure
     File.delete "test.c"    if File.exists? "test.c"
     File.delete "test.bin"  if File.exists? "test.bin"
@@ -160,33 +160,33 @@ class TestBin2C < Test::Unit::TestCase
 
 
   def  test_that_c_compile_can_fail
-    
+
     gen_random_file  "abe.bin", 1280
     `../bin2c  -o abe.c  abe.bin`
 
     #  corrupt C so compile will fail
     text = File.read( "abe.c" )
-    text.gsub! /\}/, ""    
-    File.open( "abe.c", "w" ) { |f| f.puts text }  
+    text.gsub! /\}/, ""
+    File.open( "abe.c", "w" ) { |f| f.puts text }
 
-    assert_raise Test::Unit::AssertionFailedError do      
+    assert_raise Test::Unit::AssertionFailedError do
       compiler_test  "abe.c", "abe.bin"
     end
   end
 
 
   def  test_that_c_to_binary_comparison_can_fail
-    
+
     gen_random_file  "abe.bin", 780
     `../bin2c  -o abe.c  abe.bin`
 
-    # shorten binary so comparison will fail    
+    # shorten binary so comparison will fail
     bin = File.open( "abe.bin", "rb" ).read(1280)
-    File.open( "abe.bin", "wb" ) { |f| f.write bin[0..-2] }  
+    File.open( "abe.bin", "wb" ) { |f| f.write bin[0..-2] }
 
-    assert_raise Test::Unit::AssertionFailedError do      
+    assert_raise Test::Unit::AssertionFailedError do
       compiler_test  "abe.c", "abe.bin"
-    end       
+    end
   end
 
 
@@ -201,18 +201,18 @@ class TestBin2C < Test::Unit::TestCase
 
   def  size_test  size
     common_test  "-o foo.c  foo.bin",
-                 "foo.c", 
+                 "foo.c",
                  "foo.bin",
                  size
   end
-  
 
-  #  Generate binary data file 
+
+  #  Generate binary data file
   #  of specified size.  Data
   #  is random.
 
   def  gen_random_file  name, size
-    
+
     data = Array.new(size) { rand(256) }.pack('c*')
     File.open( name, "w" ) { |f| f.write( data ) }
   end
@@ -222,20 +222,20 @@ class TestBin2C < Test::Unit::TestCase
   #  binary file, run bin2c, check output.
 
   def  common_test  cmdline,
-                    cfile    ="foo.c", 
+                    cfile    ="foo.c",
                     binfile  ="foo.bin",
                     filesize =nil
-               
+
     if filesize == nil
       filesize = 1 + rand(8000)
     end
-    
+
     gen_random_file  binfile, filesize
 
     `../bin2c  #{cmdline}`
     assert_equal 0, $?.exitstatus
 
-    compiler_test  cfile, 
+    compiler_test  cfile,
                    binfile
   end
 
@@ -243,65 +243,65 @@ class TestBin2C < Test::Unit::TestCase
   #  Compile file produced by bin2c
   #  and run it in C app that verifies
   #  its contents.
-  
+
   def  compiler_test  cfile, binfile
-                        
+
     assert  File.exist? cfile
     assert  File.exist? binfile
-  
+
     #  extract array type, name &
     #  size from cfile.
 
     repl = {}
     text = File.read( cfile )
-  
-    text.scan( /^(.*) ([A-Za-z_][A-Za-z_0-9]*)\[(\d+)\] =/ )  do  
+
+    text.scan( /^(.*) ([A-Za-z_][A-Za-z_0-9]*)\[(\d+)\] =/ )  do
       |type, name, size|
-    
+
       #  remove 'const' modifier from
       #  type.  test array must be writeable.
 
       if type[0,5] == "const"
         type = type[6..-1]
       end
-    
-      repl = {/<arrtype>/  => type.strip, 
+
+      repl = {/<arrtype>/  => type.strip,
               /<arrname>/  => name,
               /<arrsize>/  => size,
               /<filename>/ => cfile }
     end
 
-    #  adjust labels in test app 
+    #  adjust labels in test app
     #  to link it with cfile.
-  
+
     text = File.read( "bin2c_test.c" )
-                  
+
     repl.each do |search, replace|
       text.gsub! search, replace
     end
-  
-    File.open( "tmp_test.c", "w" ) { |f| f.puts text }  
-  
+
+    File.open( "tmp_test.c", "w" ) { |f| f.puts text }
+
     #  compile with cfile and run
     #  app to test.  g++ allows c
     #  or c++.
-  
+
     if cfile.end_with?(".h")
       out = `g++  -o tmp_test.exe  tmp_test.c  -D HEADER  2>&1`
     else
       out = `g++  -o tmp_test.exe  tmp_test.c  #{cfile}  2>&1`
     end
     assert_equal 0, $?.exitstatus
-  
-    out += `./tmp_test.exe  #{binfile}  2>&1`    
+
+    out += `./tmp_test.exe  #{binfile}  2>&1`
     assert_equal 0, $?.exitstatus
-  
+
     out
-    
+
   ensure
     [cfile, binfile, "tmp_test.c", "tmp_test.exe"].each do |f|
       File.delete f   if File.exists? f
     end
   end
-  
+
 end
