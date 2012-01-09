@@ -126,7 +126,7 @@ end
 #  - Typical output -
 #     //  test.bin converted to C array.
 #     //
-#     //  - using bin2c.rb 0.2
+#     //  - using bin2c 0.2
 #     //  - created 2011-12-21
 #
 #     const unsigned char  test[160] = 

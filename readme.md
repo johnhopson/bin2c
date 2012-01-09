@@ -1,11 +1,11 @@
-#bin2c.rb
+#bin2c
 - - - - - - - -
-bin2c.rb translates the contents of any file to a C array.
+bin2c translates the contents of any file to a C array.
 
 
 ### Usage
 
-	Usage: bin2c.rb [options] [filename]
+	Usage: bin2c [options] [filename]
 	    -n, --name NAME                  Array name
 	    -t, --type TYPE                  Array type
 	    -o, --output FILE                Specify output file
@@ -15,21 +15,21 @@ bin2c.rb translates the contents of any file to a C array.
 	        --version                    Emit version and exit
 
 	Examples:
-	    bin2c.rb -o output.cpp  foo.bin
-	    bin2c.rb -o header.h  foo.bin
-	    bin2c.rb -v  <foo.bin  >output.cpp
-	    bin2c.rb --no-preamble  -o output.cpp  <foo.bin
-	    bin2c.rb --type "uint8_t"  <foo.bin  >output.cpp
+	    bin2c -o output.cpp  foo.bin
+	    bin2c -o header.h  foo.bin
+	    bin2c -v  <foo.bin  >output.cpp
+	    bin2c --no-preamble  -o output.cpp  <foo.bin
+	    bin2c --type "uint8_t"  <foo.bin  >output.cpp
 
 
 ### Output
 
 	//  foo.bin converted to C array.
 	//
-	//  - using bin2c.rb 0.7
+	//  - using bin2c 0.7
 	//  - created 2011-12-23
 
-	unsigned char  foo[22] = 
+	unsigned char  foo[22] =
 	{
 	    0xc9, 0x78, 0xb3, 0xb0, 0xab, 0x78, 0x2b, 0x09,     //  .x...x+.     0
 	    0xfc, 0x52, 0x76, 0xfa, 0x9d, 0xc8, 0xc5, 0x86,     //  .Rv.....     8
@@ -38,9 +38,11 @@ bin2c.rb translates the contents of any file to a C array.
 
 
 ### Testing
-bin2c_test.rb is a test suite for bin2c.rb.  Type 'bin2c_test.rb' to run the entire suite.  Type 'bin2c_test.rb -h' to see usage, including how to run individual tests.
+test/bin2c_test.rb is a test suite for bin2c.  To run the suite, cd to 'test'
+and type './bin2c_test.rb' to run the entire suite.  Type './bin2c_test.rb -h'
+to see usage, including how to run individual tests.
 
 
 ### Source
-bin2c is hosted at [github.com/johnhopson/bin2c](http://github.com/johnhopson/bin2c).  
+bin2c is hosted at [github.com/johnhopson/bin2c](http://github.com/johnhopson/bin2c).
 It is released under the MIT license.  See 'license' file.
