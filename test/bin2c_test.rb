@@ -6,8 +6,8 @@
 #  - Get usage with 'bin2c_test.rb -h'
 #
 #  - Binary file lengths have no significance, unless
-#    specified.  A variety of lengths are specified to
-#    achieve some degree of coverage.
+#    specified.  A variety of lengths are used to test
+#    arbitrary sizes.
 #
 #  - Requires GCC, but only basic features.
 #
@@ -18,10 +18,17 @@
 #  - 'license' file has release terms
 #
 
+
 require "test/unit"
 require 'stringio'
 
+
 class TestBin2C < Test::Unit::TestCase
+
+  def setup
+    @rootdir = File.join(File.dirname(__FILE__), '..')
+    @bin2c   = File.join( @rootdir, 'bin2c' )
+  end
 
 
   def  test_tiny_file
@@ -100,21 +107,21 @@ class TestBin2C < Test::Unit::TestCase
 
 
   def  test_version_option
-    assert_equal  "bin2c 0.7\n", `../bin2c  --version`
+    assert_equal  "bin2c 0.7\n", `#{@bin2c}  --version`
   end
 
 
   def  test_output_with_no_header
 
     gen_random_file  "foo.bin", 99
-    `../bin2c  -o foo.c  foo.bin`
+    `#{@bin2c}  -o foo.c  foo.bin`
     size_with_preamble = File.stat("foo.c").size
     File.delete "foo.c"
 
-    `../bin2c  --preamble  -o foo.c  foo.bin`
+    `#{@bin2c}  --preamble  -o foo.c  foo.bin`
     assert_equal  size_with_preamble, File.stat("foo.c").size
 
-    `../bin2c  --no-preamble  -o foo.c  foo.bin`
+    `#{@bin2c}  --no-preamble  -o foo.c  foo.bin`
     size_wo_preamble = File.stat("foo.c").size
     assert  size_with_preamble > size_wo_preamble
 
@@ -142,7 +149,7 @@ class TestBin2C < Test::Unit::TestCase
 
        notes
 
-    assert_equal expected, `../bin2c  --help`
+    assert_equal expected, `#{@bin2c}  --help`
   end
 
 
@@ -150,7 +157,7 @@ class TestBin2C < Test::Unit::TestCase
 
     gen_random_file  "test.bin", 0
     assert_equal  "empty input file - exiting\n",
-                  `../bin2c  -o "test.c"  test.bin 2>&1`
+                  `#{@bin2c}  -o "test.c"  test.bin 2>&1`
     assert_equal  $?.exitstatus, 1
 
   ensure
@@ -162,7 +169,7 @@ class TestBin2C < Test::Unit::TestCase
   def  test_that_c_compile_can_fail
 
     gen_random_file  "abe.bin", 1280
-    `../bin2c  -o abe.c  abe.bin`
+    `#{@bin2c}  -o abe.c  abe.bin`
 
     #  corrupt C so compile will fail
     text = File.read( "abe.c" )
@@ -178,7 +185,7 @@ class TestBin2C < Test::Unit::TestCase
   def  test_that_c_to_binary_comparison_can_fail
 
     gen_random_file  "abe.bin", 780
-    `../bin2c  -o abe.c  abe.bin`
+    `#{@bin2c}  -o abe.c  abe.bin`
 
     # shorten binary so comparison will fail
     bin = File.open( "abe.bin", "rb" ).read(1280)
@@ -232,7 +239,7 @@ class TestBin2C < Test::Unit::TestCase
 
     gen_random_file  binfile, filesize
 
-    `../bin2c  #{cmdline}`
+    `#{@bin2c}  #{cmdline}`
     assert_equal 0, $?.exitstatus
 
     compiler_test  cfile,
