@@ -14,7 +14,6 @@
 
 require  'time'
 require  'optparse'
-require  'benchmark'
 
 
 #  bin2c version
@@ -209,10 +208,5 @@ end
 
 
 #  start processing
-
-time = Benchmark.realtime do
-  parseopts
-  emitfile
-end
-
-puts "Time elapsed %.2f ms\n\n"  %  (time*1000)  if @options[:verbose]
+parseopts
+emitfile
