@@ -1,4 +1,4 @@
-/* -------------------  (c)2011 john hopson  -------------------
+/* --------------------  (c)john hopson  --------------------
 
  Helps test bin2c program.  Compares the contents of the emitted
  C array against the binary file from which the array was created.
@@ -12,11 +12,9 @@
        <arrsize>     C array size
        <filename>    binary file name
 
- - Written and tested with gcc 4.2.1 on OS X.
-
+ - Written and tested with gcc 4.2.1 on OS X 10.7
  - Hosted at github.com/johnhopson/bin2c
-
- - 'license' file has release terms
+ - licensed per creativecommons.org/licenses/by-sa/3.0
 */
 
 #include  <cstring>

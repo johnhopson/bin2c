@@ -1,6 +1,6 @@
 #bin2c
 - - - - - - - -
-bin2c translates the contents of any file to a C array.
+Bin2c translates the contents of any file to a C array.
 
 
 ### Usage
@@ -37,12 +37,12 @@ bin2c translates the contents of any file to a C array.
 	};
 
 
-### Testing
-test/bin2c_test.rb is a test suite for bin2c.  To run the suite, cd to 'test'
-and type './bin2c_test.rb' to run the entire suite.  Type './bin2c_test.rb -h'
-to see usage, including how to run individual tests.
 
+## Test
+'test/bin2c\_test.rb' is a test suite for Bin2c.  Use the '-h' option to see
+usage, including how to run individual tests.
 
-### Source
-bin2c is hosted at [github.com/johnhopson/bin2c](http://github.com/johnhopson/bin2c).
-It is released under the MIT license.  See 'license' file.
+## Other
+Written and tested with Ruby 1.8.7 on OS X 10.7.
+
+[![CC](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)](http://creativecommons.org/licenses/by-sa/3.0/)   &nbsp;Licensed under [Creative Commons](http://creativecommons.org/licenses/by-sa/3.0/)
