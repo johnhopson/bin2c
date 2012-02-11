@@ -1,22 +1,15 @@
 #!/usr/bin/env ruby
-# ------------------  (c)2011 john hopson  -------------------
+# --------------------  (c)john hopson  --------------------
 #
 #  Test suite for bin2c program.
-#
-#  - Get usage with 'bin2c_test.rb -h'
 #
 #  - Binary file lengths have no significance, unless
 #    specified.  A variety of lengths are used to test
 #    arbitrary sizes.
-#
-#  - Requires GCC, but only basic features.
-#
-#  - Written and tested with ruby 1.8.7 on OS X.
-#
-#  - Hosted at github.com/johnhopson/bin2c
-#
-#  - 'license' file has release terms
-#
+#  - Get usage with 'bin2c_test.rb -h'
+#  - Requires only basic GCC features.
+#  - hosted at github.com/johnhopson/bin2c
+#  - Licensed per creativecommons.org/licenses/by-sa/3.0
 
 
 require "test/unit"

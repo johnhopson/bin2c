@@ -38,11 +38,11 @@ Bin2c translates the contents of any file to a C array.
 
 
 
-## Test
+### Test
 'test/bin2c\_test.rb' is a test suite for Bin2c.  Use the '-h' option to see
 usage, including how to run individual tests.
 
-## Other
+### Other
 Written and tested with Ruby 1.8.7 on OS X 10.7.
 
 [![CC](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)](http://creativecommons.org/licenses/by-sa/3.0/)   &nbsp;Licensed under [Creative Commons](http://creativecommons.org/licenses/by-sa/3.0/)
