@@ -23,7 +23,6 @@ class TestBin2C < Test::Unit::TestCase
     @bin2c   = File.join( @rootdir, 'bin2c' )
   end
 
-
   def  test_tiny_file
     size_test( 1 )
   end
@@ -54,7 +53,6 @@ class TestBin2C < Test::Unit::TestCase
       size_test( i )
     end
   end
-
 
   def  test_c_header_output
     common_test  "--type \"const unsigned char\" -o foo.h  foo.bin",
@@ -100,7 +98,7 @@ class TestBin2C < Test::Unit::TestCase
 
 
   def  test_version_option
-    assert_equal  "bin2c 0.7\n", `#{@bin2c}  --version`
+    assert_equal  "bin2c 0.9\n", `#{@bin2c}  --version`
   end
 
 
@@ -111,9 +109,11 @@ class TestBin2C < Test::Unit::TestCase
     size_with_preamble = File.stat("foo.c").size
     File.delete "foo.c"
 
+    # test adding '--preamble' same as default
     `#{@bin2c}  --preamble  -o foo.c  foo.bin`
     assert_equal  size_with_preamble, File.stat("foo.c").size
 
+    # test adding '--no-preamble' reduces file size
     `#{@bin2c}  --no-preamble  -o foo.c  foo.bin`
     size_wo_preamble = File.stat("foo.c").size
     assert  size_with_preamble > size_wo_preamble
@@ -121,24 +121,27 @@ class TestBin2C < Test::Unit::TestCase
     compiler_test  "foo.c", "foo.bin"
   end
 
-
   def  test_help
     expected  = <<-notes.gsub(/^ {8}/, '')
+        Translates the contents of any file to a C array.
+
         Usage: bin2c [options] [filename]
-            -n, --name NAME                  Array name
-            -t, --type TYPE                  Array type
-            -o, --output FILE                Specify output file
-            -p, --[no-]preamble              No file header
+
+        Options:
             -v, --verbose                    Run verbosely
             -h, --help                       Emit help information
                 --version                    Emit version and exit
+            -n, --name NAME                  Array name
+            -t, --type TYPE                  Array type
+            -o, --output FILE                Output file name
+            -p, --[no-]preamble              No file header
 
         Examples:
             bin2c -o output.cpp  foo.bin
             bin2c -o header.h  foo.bin
             bin2c -v  <foo.bin  >output.cpp
             bin2c --no-preamble  -o output.cpp  <foo.bin
-            bin2c --type \"uint8_t\"  <foo.bin  >output.cpp
+            bin2c --type "uint8_t"  <foo.bin  >output.cpp
 
        notes
 
@@ -188,7 +191,6 @@ class TestBin2C < Test::Unit::TestCase
       compiler_test  "abe.c", "abe.bin"
     end
   end
-
 
 
   # --  support methods  -------------------------------------
