@@ -1,5 +1,5 @@
-#bin2c
-- - - - - - - -
+bin2c
+-----
 Bin2c translates the contents of any file to a C array.
 
 
